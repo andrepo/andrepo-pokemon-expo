@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
+import { PokemonData } from '../constants/pokemonDb';
 
-export function useBattleLogic() {
-    const [playerHealth, setPlayerHealth] = useState(100);
-    const [cpuHealth, setCpuHealth] = useState(100);
+export function useBattleLogic(playerPokemon: PokemonData, cpuPokemon: PokemonData) {
+    const [playerHealth, setPlayerHealth] = useState(playerPokemon.maxHealth);
+    const [cpuHealth, setCpuHealth] = useState(cpuPokemon.maxHealth);
     const [currentTurn, setCurrentTurn] = useState<'player' | 'cpu'>('player');
     const [timeLeft, setTimeLeft] = useState(15);
     const [playerDamageTaken, setPlayerDamageTaken] = useState<number | null>(null);
@@ -58,16 +59,17 @@ export function useBattleLogic() {
         if (currentTurn === 'cpu' && cpuHealth > 0 && playerHealth > 0) {
             // Wait 1.5 seconds so the player can see it's the CPU's turn, then attack randomly
             const timeout = setTimeout(() => {
-                const isStrongAttack = Math.random() > 0.5;
-                performAttack('cpu', isStrongAttack ? 25 : 15, isStrongAttack ? 0.7 : 1.0);
+                // CPU picks a random move from its available actions
+                const move = cpuPokemon.actions[Math.floor(Math.random() * cpuPokemon.actions.length)];
+                performAttack('cpu', move.damage, move.hitChance);
             }, 1500);
             return () => clearTimeout(timeout);
         }
-    }, [currentTurn, cpuHealth, playerHealth, performAttack]);
+    }, [currentTurn, cpuHealth, playerHealth, performAttack, cpuPokemon.actions]);
 
     const resetGame = useCallback(() => {
-        setPlayerHealth(100);
-        setCpuHealth(100);
+        setPlayerHealth(playerPokemon.maxHealth);
+        setCpuHealth(cpuPokemon.maxHealth);
         setCurrentTurn('player');
         setTimeLeft(15);
         setPlayerDamageTaken(null);

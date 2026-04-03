@@ -1,10 +1,20 @@
 import { Image } from 'expo-image';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { LOOT_POOL, POKEMON_DB } from '../constants/pokemonDb';
+import { useGame } from '../context/GameContext';
 import { useBattleLogic } from '../hooks/useBattleLogic';
 import BattleSide from './BattleSide';
 
-export default function BattleScreen() {
+interface BattleScreenProps {
+    playerId?: string;
+    onExit?: () => void;
+}
+
+export default function BattleScreen({ playerId = 'pikachu', onExit }: BattleScreenProps) {
+    const playerPokemon = POKEMON_DB[playerId] || POKEMON_DB['pikachu'];
+    const cpuPokemon = POKEMON_DB['mewtwo'];
+
     const {
         playerHealth,
         cpuHealth,
@@ -14,9 +24,23 @@ export default function BattleScreen() {
         resetGame,
         playerDamageTaken,
         cpuDamageTaken,
-    } = useBattleLogic();
+    } = useBattleLogic(playerPokemon, cpuPokemon);
+
+    const { addPokemon } = useGame();
+    const [loot, setLoot] = useState<string | null>(null);
 
     const isGameOver = playerHealth <= 0 || cpuHealth <= 0;
+
+    useEffect(() => {
+        if (isGameOver) {
+            // If Player won and hasn't received loot yet
+            if (cpuHealth <= 0 && !loot) {
+                const randomLoot = LOOT_POOL[Math.floor(Math.random() * LOOT_POOL.length)];
+                setLoot(randomLoot);
+                addPokemon(randomLoot);
+            }
+        }
+    }, [isGameOver, cpuHealth, loot, addPokemon]);
 
     return (
         <View style={styles.background}>
@@ -42,39 +66,32 @@ export default function BattleScreen() {
 
                     {/* PLAYER SIDE (Left) */}
                     <BattleSide
-                        name='Pikachu'
-                        health={playerHealth}
-                        energy={100}
-                        pokemonSpriteUri='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/25.gif'
+                        name={playerPokemon.name}
+                        health={(playerHealth / playerPokemon.maxHealth) * 100}
+                        energy={playerPokemon.energy}
+                        pokemonSpriteUri={playerPokemon.spriteUri}
                         trainerSpriteUri='https://play.pokemonshowdown.com/sprites/trainers/ash.png'
                         trainerPosition='left'
-                        actions={[
-                            {
-                                label: 'Bola Elétrica',
-                                disabled: currentTurn !== 'player' || playerHealth <= 0,
-                                onPress: () => handlePlayerAttack(25, 0.8), // 25 Dmg, 80% Accuracy
-                            },
-                            {
-                                label: 'Raio da Fúria',
-                                disabled: currentTurn !== 'player' || playerHealth <= 0,
-                                onPress: () => handlePlayerAttack(15, 1.0), // 15 Dmg, 100% Accuracy
-                            },
-                        ]}
+                        actions={playerPokemon.actions.map((action) => ({
+                            label: action.label,
+                            disabled: currentTurn !== 'player' || playerHealth <= 0,
+                            onPress: () => handlePlayerAttack(action.damage, action.hitChance),
+                        }))}
                         damageTaken={playerDamageTaken}
                     />
 
                     {/* CPU SIDE (Right) */}
                     <BattleSide
-                        name='Mewtwo'
-                        health={cpuHealth}
-                        energy={80}
-                        pokemonSpriteUri='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/150.gif'
+                        name={cpuPokemon.name}
+                        health={(cpuHealth / cpuPokemon.maxHealth) * 100}
+                        energy={cpuPokemon.energy}
+                        pokemonSpriteUri={cpuPokemon.spriteUri}
                         trainerSpriteUri='https://play.pokemonshowdown.com/sprites/trainers/ash.png'
                         trainerPosition='right'
-                        actions={[
-                            { label: 'Psíquico', disabled: true },
-                            { label: 'Recuperar', disabled: true },
-                        ]}
+                        actions={cpuPokemon.actions.map((action) => ({
+                            label: action.label,
+                            disabled: true,
+                        }))}
                         damageTaken={cpuDamageTaken}
                     />
                 </View>
@@ -84,9 +101,33 @@ export default function BattleScreen() {
             {isGameOver && (
                 <View style={styles.gameOverOverlay}>
                     <Text style={styles.gameOverText}>VOCÊ {playerHealth <= 0 ? 'PERDEU!' : 'VENCEU!'}</Text>
-                    <TouchableOpacity style={styles.restartButton} onPress={resetGame}>
+
+                    {loot && (
+                        <View style={styles.lootContainer}>
+                            <Text style={styles.lootText}>NOVO POKÉMON: {POKEMON_DB[loot].name}!</Text>
+                            <Image
+                                source={{ uri: POKEMON_DB[loot].spriteUri }}
+                                style={{ width: 100, height: 100 }}
+                                contentFit='contain'
+                            />
+                        </View>
+                    )}
+
+                    <TouchableOpacity
+                        style={styles.restartButton}
+                        onPress={() => {
+                            setLoot(null);
+                            resetGame();
+                        }}
+                    >
                         <Text style={styles.restartButtonText}>JOGAR NOVAMENTE</Text>
                     </TouchableOpacity>
+
+                    {onExit && (
+                        <TouchableOpacity style={[styles.restartButton, styles.exitButton]} onPress={onExit}>
+                            <Text style={styles.restartButtonText}>VOLTAR AO MENU</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
             )}
         </View>
@@ -165,6 +206,24 @@ const styles = StyleSheet.create({
         textShadowOffset: { width: 2, height: 2 },
         textShadowRadius: 5,
     },
+    lootContainer: {
+        marginTop: 20,
+        alignItems: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        padding: 16,
+        borderRadius: 16,
+        borderWidth: 2,
+        borderColor: '#fbbf24',
+    },
+    lootText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#fff',
+        marginBottom: 10,
+        textShadowColor: '#000',
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 2,
+    },
     restartButton: {
         marginTop: 24,
         backgroundColor: '#ef4444',
@@ -173,6 +232,10 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         borderWidth: 3,
         borderColor: '#991b1b',
+    },
+    exitButton: {
+        backgroundColor: '#3b82f6',
+        borderColor: '#1d4ed8',
     },
     restartButtonText: {
         color: '#fff',
