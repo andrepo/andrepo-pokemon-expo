@@ -1,84 +1,115 @@
 import { Image } from 'expo-image';
 import { Tabs, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { POKEMON_DB } from '../../constants/pokemonDb';
 import { useGame } from '../../context/GameContext';
 
-export default function HomeScreen() {
+// --- Custom Hook (Logic) ---
+function useHomeScreen() {
     const router = useRouter();
     const { ownedPokemonIds } = useGame();
     const [view, setView] = useState<'menu' | 'browser' | 'select'>('menu');
 
-    const renderMenu = () => (
+    const navigateToBattle = (playerId: string) => {
+        router.push({ pathname: '/battle', params: { playerId } });
+    };
+
+    return { view, setView, ownedPokemonIds, navigateToBattle };
+}
+
+// --- Reusable UI Components ---
+function MenuButton({ onPress, title }: { onPress: () => void; title: string }) {
+    return (
+        <TouchableOpacity style={styles.btn} onPress={onPress}>
+            <Text style={styles.btnText}>{title}</Text>
+        </TouchableOpacity>
+    );
+}
+
+function PokemonRow({ item, onPress, showBio = false }: { item: string; onPress?: () => void; showBio?: boolean }) {
+    const pkmn = POKEMON_DB[item];
+    // Se possuir 'onPress', o item vira um botão, senão, apenas uma View comum (inventário)
+    const Container = onPress ? TouchableOpacity : View;
+
+    return (
+        <Container style={styles.row} onPress={onPress} activeOpacity={onPress ? 0.7 : 1}>
+            <Image source={{ uri: pkmn.spriteUri }} style={styles.sprite} contentFit='contain' />
+            <View style={styles.infoContainer}>
+                <Text style={styles.pkmnName}>{pkmn.name}</Text>
+                {pkmn.type && <Text style={styles.pkmnType}>{pkmn.type}</Text>}
+                {showBio && pkmn.shortBio && (
+                    <Text style={styles.pkmnBio} numberOfLines={2}>
+                        {pkmn.shortBio}
+                    </Text>
+                )}
+            </View>
+        </Container>
+    );
+}
+
+// --- Screen Sections ---
+function MainMenu({ setView }: { setView: (v: 'menu' | 'browser' | 'select') => void }) {
+    return (
         <View style={styles.center}>
             <Text style={styles.title}>POKÉMON HUB</Text>
-            <TouchableOpacity style={styles.btn} onPress={() => setView('select')}>
-                <Text style={styles.btnText}>BATALHA</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.btn} onPress={() => setView('browser')}>
-                <Text style={styles.btnText}>MEUS POKÉMONS</Text>
-            </TouchableOpacity>
+            <MenuButton onPress={() => setView('select')} title='BATALHA' />
+            <MenuButton onPress={() => setView('browser')} title='MEUS POKÉMONS' />
         </View>
     );
+}
 
-    const renderBrowser = () => (
+function PokemonBrowser({ ownedPokemonIds, setView }: { ownedPokemonIds: string[]; setView: (v: 'menu') => void }) {
+    return (
         <View style={styles.center}>
             <Text style={styles.title}>INVENTÁRIO</Text>
             <FlatList
                 data={ownedPokemonIds}
                 keyExtractor={(id) => id}
                 contentContainerStyle={{ alignItems: 'center' }}
-                renderItem={({ item }) => {
-                    const pkmn = POKEMON_DB[item];
-                    return (
-                        <View style={styles.row}>
-                            <Image source={{ uri: pkmn.spriteUri }} style={styles.sprite} contentFit='contain' />
-                            <Text style={styles.pkmnName}>{pkmn.name}</Text>
-                        </View>
-                    );
-                }}
+                renderItem={({ item }) => <PokemonRow item={item} showBio />}
             />
-            <TouchableOpacity style={styles.btn} onPress={() => setView('menu')}>
-                <Text style={styles.btnText}>VOLTAR</Text>
-            </TouchableOpacity>
+            <MenuButton onPress={() => setView('menu')} title='VOLTAR' />
         </View>
     );
+}
 
-    const renderSelect = () => (
+function FighterSelect({
+    ownedPokemonIds,
+    setView,
+    onSelect,
+}: {
+    ownedPokemonIds: string[];
+    setView: (v: 'menu') => void;
+    onSelect: (id: string) => void;
+}) {
+    return (
         <View style={styles.center}>
             <Text style={styles.title}>ESCOLHA SEU LUTADOR</Text>
             <FlatList
                 data={ownedPokemonIds}
                 keyExtractor={(id) => id}
                 contentContainerStyle={{ alignItems: 'center' }}
-                renderItem={({ item }) => {
-                    const pkmn = POKEMON_DB[item];
-                    return (
-                        <TouchableOpacity
-                            style={styles.row}
-                            onPress={() => {
-                                router.push({ pathname: '/battle', params: { playerId: item } });
-                            }}
-                        >
-                            <Image source={{ uri: pkmn.spriteUri }} style={styles.sprite} contentFit='contain' />
-                            <Text style={styles.pkmnName}>{pkmn.name}</Text>
-                        </TouchableOpacity>
-                    );
-                }}
+                renderItem={({ item }) => <PokemonRow item={item} onPress={() => onSelect(item)} />}
             />
-            <TouchableOpacity style={styles.btn} onPress={() => setView('menu')}>
-                <Text style={styles.btnText}>VOLTAR</Text>
-            </TouchableOpacity>
+            <MenuButton onPress={() => setView('menu')} title='VOLTAR' />
         </View>
     );
+}
+
+// --- Main Screen Component ---
+export default function HomeScreen() {
+    const { view, setView, ownedPokemonIds, navigateToBattle } = useHomeScreen();
 
     return (
         <SafeAreaView style={styles.container}>
             <Tabs.Screen options={{ tabBarStyle: { display: 'none' } }} />
-            {view === 'menu' && renderMenu()}
-            {view === 'browser' && renderBrowser()}
-            {view === 'select' && renderSelect()}
+            {view === 'menu' && <MainMenu setView={setView} />}
+            {view === 'browser' && <PokemonBrowser ownedPokemonIds={ownedPokemonIds} setView={setView} />}
+            {view === 'select' && (
+                <FighterSelect ownedPokemonIds={ownedPokemonIds} setView={setView} onSelect={navigateToBattle} />
+            )}
         </SafeAreaView>
     );
 }
@@ -114,10 +145,13 @@ const styles = StyleSheet.create({
         padding: 12,
         borderRadius: 12,
         marginBottom: 12,
-        width: 250,
+        width: 300,
         borderWidth: 2,
         borderColor: '#4b5563',
     },
     sprite: { width: 60, height: 60, marginRight: 16 },
+    infoContainer: { flex: 1 },
     pkmnName: { color: '#fff', fontSize: 20, fontWeight: 'bold' },
+    pkmnType: { color: '#9ca3af', fontSize: 12, fontWeight: '600', marginBottom: 2 },
+    pkmnBio: { color: '#d1d5db', fontSize: 11, fontStyle: 'italic' },
 });

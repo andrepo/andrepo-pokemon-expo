@@ -1,9 +1,10 @@
 import { Image } from 'expo-image';
-import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { LOOT_POOL, POKEMON_DB } from '../constants/pokemonDb';
-import { useGame } from '../context/GameContext';
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { POKEMON_DB } from '../constants/pokemonDb';
 import { useBattleLogic } from '../hooks/useBattleLogic';
+import { useBattleLoot } from '../hooks/useBattleLoot';
 import BattleSide from './BattleSide';
 
 interface BattleScreenProps {
@@ -18,29 +19,21 @@ export default function BattleScreen({ playerId = 'pikachu', onExit }: BattleScr
     const {
         playerHealth,
         cpuHealth,
+        playerEnergy,
+        cpuEnergy,
         currentTurn,
         timeLeft,
-        handlePlayerAttack,
         resetGame,
         playerDamageTaken,
         cpuDamageTaken,
+        playerActions,
+        cpuActions,
     } = useBattleLogic(playerPokemon, cpuPokemon);
 
-    const { addPokemon } = useGame();
-    const [loot, setLoot] = useState<string | null>(null);
-
     const isGameOver = playerHealth <= 0 || cpuHealth <= 0;
+    const isPlayerWinner = cpuHealth <= 0;
 
-    useEffect(() => {
-        if (isGameOver) {
-            // If Player won and hasn't received loot yet
-            if (cpuHealth <= 0 && !loot) {
-                const randomLoot = LOOT_POOL[Math.floor(Math.random() * LOOT_POOL.length)];
-                setLoot(randomLoot);
-                addPokemon(randomLoot);
-            }
-        }
-    }, [isGameOver, cpuHealth, loot, addPokemon]);
+    const { loot, setLoot } = useBattleLoot(isGameOver, isPlayerWinner);
 
     return (
         <View style={styles.background}>
@@ -68,15 +61,11 @@ export default function BattleScreen({ playerId = 'pikachu', onExit }: BattleScr
                     <BattleSide
                         name={playerPokemon.name}
                         health={(playerHealth / playerPokemon.maxHealth) * 100}
-                        energy={playerPokemon.energy}
+                        energy={(playerEnergy / playerPokemon.energy) * 100}
                         pokemonSpriteUri={playerPokemon.spriteUri}
                         trainerSpriteUri='https://play.pokemonshowdown.com/sprites/trainers/ash.png'
                         trainerPosition='left'
-                        actions={playerPokemon.actions.map((action) => ({
-                            label: action.label,
-                            disabled: currentTurn !== 'player' || playerHealth <= 0,
-                            onPress: () => handlePlayerAttack(action.damage, action.hitChance),
-                        }))}
+                        actions={playerActions}
                         damageTaken={playerDamageTaken}
                     />
 
@@ -84,14 +73,11 @@ export default function BattleScreen({ playerId = 'pikachu', onExit }: BattleScr
                     <BattleSide
                         name={cpuPokemon.name}
                         health={(cpuHealth / cpuPokemon.maxHealth) * 100}
-                        energy={cpuPokemon.energy}
+                        energy={(cpuEnergy / cpuPokemon.energy) * 100}
                         pokemonSpriteUri={cpuPokemon.spriteUri}
                         trainerSpriteUri='https://play.pokemonshowdown.com/sprites/trainers/ash.png'
                         trainerPosition='right'
-                        actions={cpuPokemon.actions.map((action) => ({
-                            label: action.label,
-                            disabled: true,
-                        }))}
+                        actions={cpuActions}
                         damageTaken={cpuDamageTaken}
                     />
                 </View>

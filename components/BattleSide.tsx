@@ -47,7 +47,9 @@ export default function BattleSide({
                     contentFit='contain'
                 />
                 {damageTaken !== null && damageTaken !== undefined && (
-                    <Text style={styles.floatingDamage}>-{damageTaken}</Text>
+                    <Text style={[styles.floatingDamage, damageTaken < 0 && styles.floatingHeal]}>
+                        {damageTaken < 0 ? `+${Math.abs(damageTaken)}` : `-${damageTaken}`}
+                    </Text>
                 )}
             </View>
 
@@ -132,6 +134,9 @@ const styles = StyleSheet.create({
         textShadowOffset: { width: 2, height: 2 },
         textShadowRadius: 3,
         transform: [{ translateY: 30 }], // Hovers slightly above the pokemon
+    },
+    floatingHeal: {
+        color: '#3b82f6', // Blue for healing
     },
     trainerSpriteLeft: {
         width: 140,

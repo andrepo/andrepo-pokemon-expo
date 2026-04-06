@@ -4,7 +4,9 @@ export type PokemonData = {
     maxHealth: number;
     energy: number;
     spriteUri: string;
-    actions: { label: string; damage: number; hitChance: number }[];
+    type?: string;
+    shortBio?: string;
+    actions: { label: string; damage: number; hitChance: number; energyCost?: number }[];
 };
 
 export const POKEMON_DB: Record<string, PokemonData> = {
@@ -15,9 +17,12 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         energy: 100,
         spriteUri:
             'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/25.gif',
+        type: 'Elétrico',
+        shortBio:
+            'Pikachus que podem gerar eletricidade poderosa têm bolsas nas bochechas que são extra macias e super elásticas.',
         actions: [
-            { label: 'Bola Elétrica', damage: 22, hitChance: 0.9 }, // Based on Thunderbolt (Power 90)
-            { label: 'Ataque Rápido', damage: 10, hitChance: 1.0 }, // Based on Quick Attack (Power 40)
+            { label: 'Bola Elétrica', damage: 22, hitChance: 0.9, energyCost: 20 },
+            { label: 'Ataque Rápido', damage: 10, hitChance: 1.0, energyCost: -15 },
         ],
     },
     mewtwo: {
@@ -27,9 +32,13 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         energy: 80,
         spriteUri:
             'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/150.gif',
+        type: 'Psíquico',
+        shortBio:
+            'Foi criado por um cientista após anos de terríveis experimentos de engenharia de DNA e manipulação genética.',
         actions: [
-            { label: 'Psíquico', damage: 22, hitChance: 0.85 }, // Based on Psychic (Power 90)
-            { label: 'Recuperar', damage: -25, hitChance: 1.0 }, // Heals a flat amount
+            { label: 'Confusão', damage: 10, hitChance: 1.0, energyCost: -15 },
+            { label: 'Psíquico', damage: 22, hitChance: 0.85, energyCost: 25 },
+            { label: 'Recuperar', damage: -25, hitChance: 1.0, energyCost: 30 },
         ],
     },
     charmander: {
@@ -39,9 +48,11 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         energy: 100,
         spriteUri:
             'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/4.gif',
+        type: 'Fogo',
+        shortBio: 'A chama que queima na ponta de sua cauda é uma indicação de suas emoções.',
         actions: [
-            { label: 'Lança-Chamas', damage: 22, hitChance: 0.85 }, // Based on Flamethrower (Power 90)
-            { label: 'Arranhão', damage: 10, hitChance: 1.0 }, // Based on Scratch (Power 40)
+            { label: 'Lança-Chamas', damage: 22, hitChance: 0.85, energyCost: 20 },
+            { label: 'Arranhão', damage: 10, hitChance: 1.0, energyCost: -15 },
         ],
     },
     bulbasaur: {
@@ -51,12 +62,91 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         energy: 100,
         spriteUri:
             'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/1.gif',
+        type: 'Planta / Venenoso',
+        shortBio: 'Há uma semente de planta em suas costas desde o dia em que este Pokémon nasce.',
         actions: [
-            { label: 'Chicote Vinha', damage: 11, hitChance: 0.95 }, // Based on Vine Whip (Power 45)
-            { label: 'Investida', damage: 10, hitChance: 1.0 }, // Based on Tackle (Power 40)
+            { label: 'Chicote Vinha', damage: 11, hitChance: 0.95, energyCost: 15 },
+            { label: 'Investida', damage: 10, hitChance: 1.0, energyCost: -15 },
+        ],
+    },
+    eevee: {
+        id: 'eevee',
+        name: 'Eevee',
+        maxHealth: 100,
+        energy: 100,
+        spriteUri:
+            'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/133.gif',
+        type: 'Normal',
+        shortBio:
+            'Seu código genético é irregular. Pode sofrer mutações se for exposto à radiação de pedras elementares.',
+        actions: [
+            { label: 'Ataque Rápido', damage: 10, hitChance: 1.0, energyCost: -15 },
+            { label: 'Cavar', damage: 22, hitChance: 0.85, energyCost: 20 },
+        ],
+    },
+    psyduck: {
+        id: 'psyduck',
+        name: 'Psyduck',
+        maxHealth: 110,
+        energy: 100,
+        spriteUri:
+            'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/54.gif',
+        type: 'Água',
+        shortBio:
+            'Enquanto distrai seus inimigos com seu olhar vago, este Pokémon astuto usará poderes psicocinéticos.',
+        actions: [
+            { label: 'Arma de Água', damage: 12, hitChance: 0.95, energyCost: -15 },
+            { label: 'Confusão', damage: 20, hitChance: 0.85, energyCost: 25 },
+        ],
+    },
+    meowth: {
+        id: 'meowth',
+        name: 'Meowth',
+        maxHealth: 90,
+        energy: 100,
+        spriteUri:
+            'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/52.gif',
+        type: 'Normal',
+        shortBio: 'Adora objetos circulares. Vaga pelas ruas todas as noites à procura de moedas perdidas.',
+        actions: [
+            { label: 'Arranhão', damage: 10, hitChance: 1.0, energyCost: -15 },
+            { label: 'Talho Noturno', damage: 20, hitChance: 0.9, energyCost: 20 },
+        ],
+    },
+    paras: {
+        id: 'paras',
+        name: 'Paras',
+        maxHealth: 85,
+        energy: 100,
+        spriteUri:
+            'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/47.gif',
+        type: 'Inseto / Planta',
+        shortBio:
+            'Cava debaixo da terra para roer raízes de árvores. Os cogumelos em suas costas absorvem a maior parte de sua nutrição.',
+        actions: [
+            { label: 'Picada', damage: 12, hitChance: 0.95, energyCost: -15 },
+            { label: 'Bomba Semente', damage: 25, hitChance: 0.8, energyCost: 25 },
+        ],
+    },
+    jigglypuff: {
+        id: 'jigglypuff',
+        name: 'Jigglypuff',
+        maxHealth: 130,
+        energy: 100,
+        spriteUri:
+            'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/39.gif',
+        type: 'Normal / Fada',
+        shortBio:
+            'Quando este Pokémon canta, ele nunca faz pausas para respirar. Se estiver em uma batalha contra um oponente que não adormece facilmente, Jigglypuff pode ficar sem ar, colocando sua vida em perigo.',
+        actions: [
+            { label: 'Tapa', damage: 10, hitChance: 1.0, energyCost: -15 },
+            { label: 'Brilho Mágico', damage: 25, hitChance: 0.8, energyCost: 30 },
         ],
     },
 };
 
-// The pool of pokemon you can unlock by winning!
-export const LOOT_POOL = ['charmander', 'bulbasaur'];
+// Returns the pool of Pokémon you can unlock by winning, excluding those already owned!
+export const getLootPool = (ownedPokemonIds: string[]): string[] => {
+    const excludedIds = ['pikachu', 'mewtwo'];
+    return Object.keys(POKEMON_DB).filter((id) => !excludedIds.includes(id) && !ownedPokemonIds.includes(id));
+};
