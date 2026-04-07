@@ -4,6 +4,7 @@ export type PokemonData = {
     maxHealth: number;
     energy: number;
     spriteUri: string;
+    inventoryImageUri: string;
     type?: string;
     shortBio?: string;
     actions: { label: string; damage: number; hitChance: number; energyCost?: number }[];
@@ -17,6 +18,7 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         energy: 100,
         spriteUri:
             'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/25.gif',
+        inventoryImageUri: 'https://db.pokemongohub.net/images/official/full/025.webp',
         type: 'Elétrico',
         shortBio:
             'Pikachus que podem gerar eletricidade poderosa têm bolsas nas bochechas que são extra macias e super elásticas.',
@@ -32,6 +34,7 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         energy: 80,
         spriteUri:
             'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/150.gif',
+        inventoryImageUri: 'https://db.pokemongohub.net/images/official/full/150.webp',
         type: 'Psíquico',
         shortBio:
             'Foi criado por um cientista após anos de terríveis experimentos de engenharia de DNA e manipulação genética.',
@@ -48,6 +51,7 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         energy: 100,
         spriteUri:
             'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/4.gif',
+        inventoryImageUri: 'https://db.pokemongohub.net/images/official/full/004.webp',
         type: 'Fogo',
         shortBio: 'A chama que queima na ponta de sua cauda é uma indicação de suas emoções.',
         actions: [
@@ -62,6 +66,7 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         energy: 100,
         spriteUri:
             'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/1.gif',
+        inventoryImageUri: 'https://db.pokemongohub.net/images/official/full/001.webp',
         type: 'Planta / Venenoso',
         shortBio: 'Há uma semente de planta em suas costas desde o dia em que este Pokémon nasce.',
         actions: [
@@ -76,6 +81,7 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         energy: 100,
         spriteUri:
             'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/133.gif',
+        inventoryImageUri: 'https://db.pokemongohub.net/images/official/full/133.webp',
         type: 'Normal',
         shortBio:
             'Seu código genético é irregular. Pode sofrer mutações se for exposto à radiação de pedras elementares.',
@@ -91,6 +97,7 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         energy: 100,
         spriteUri:
             'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/54.gif',
+        inventoryImageUri: 'https://db.pokemongohub.net/images/official/full/054.webp',
         type: 'Água',
         shortBio:
             'Enquanto distrai seus inimigos com seu olhar vago, este Pokémon astuto usará poderes psicocinéticos.',
@@ -106,6 +113,7 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         energy: 100,
         spriteUri:
             'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/52.gif',
+        inventoryImageUri: 'https://db.pokemongohub.net/images/official/full/052.webp',
         type: 'Normal',
         shortBio: 'Adora objetos circulares. Vaga pelas ruas todas as noites à procura de moedas perdidas.',
         actions: [
@@ -120,6 +128,7 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         energy: 100,
         spriteUri:
             'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/47.gif',
+        inventoryImageUri: 'https://db.pokemongohub.net/images/official/full/047.webp',
         type: 'Inseto / Planta',
         shortBio:
             'Cava debaixo da terra para roer raízes de árvores. Os cogumelos em suas costas absorvem a maior parte de sua nutrição.',
@@ -135,6 +144,7 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         energy: 100,
         spriteUri:
             'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/39.gif',
+        inventoryImageUri: 'https://db.pokemongohub.net/images/official/full/039.webp',
         type: 'Normal / Fada',
         shortBio:
             'Quando este Pokémon canta, ele nunca faz pausas para respirar. Se estiver em uma batalha contra um oponente que não adormece facilmente, Jigglypuff pode ficar sem ar, colocando sua vida em perigo.',

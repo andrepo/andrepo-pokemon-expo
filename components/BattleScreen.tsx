@@ -94,7 +94,7 @@ export default function BattleScreen({ playerId = 'pikachu', onExit }: BattleScr
                         <View style={styles.lootContainer}>
                             <Text style={styles.lootText}>NOVO POKÉMON: {POKEMON_DB[loot].name}!</Text>
                             <Image
-                                source={{ uri: POKEMON_DB[loot].spriteUri }}
+                                source={{ uri: POKEMON_DB[loot].inventoryImageUri }}
                                 style={{ width: 100, height: 100 }}
                                 contentFit='contain'
                             />

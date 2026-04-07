@@ -30,17 +30,26 @@ function MenuButton({ onPress, title }: { onPress: () => void; title: string }) 
 
 function PokemonRow({ item, onPress, showBio = false }: { item: string; onPress?: () => void; showBio?: boolean }) {
     const pkmn = POKEMON_DB[item];
-    // Se possuir 'onPress', o item vira um botão, senão, apenas uma View comum (inventário)
-    const Container = onPress ? TouchableOpacity : View;
+    const [expanded, setExpanded] = useState(false);
+
+    const handlePress = onPress ? onPress : showBio ? () => setExpanded(!expanded) : undefined;
+    const Container = handlePress ? TouchableOpacity : View;
+
+    const totalAttack = pkmn.actions.reduce((sum, action) => sum + (action.damage > 0 ? action.damage : 0), 0);
 
     return (
-        <Container style={styles.row} onPress={onPress} activeOpacity={onPress ? 0.7 : 1}>
-            <Image source={{ uri: pkmn.spriteUri }} style={styles.sprite} contentFit='contain' />
+        <Container style={styles.row} onPress={handlePress} activeOpacity={handlePress ? 0.7 : 1}>
+            <Image source={{ uri: pkmn.inventoryImageUri }} style={styles.sprite} contentFit='contain' />
             <View style={styles.infoContainer}>
                 <Text style={styles.pkmnName}>{pkmn.name}</Text>
                 {pkmn.type && <Text style={styles.pkmnType}>{pkmn.type}</Text>}
+                {showBio && (
+                    <Text style={styles.pkmnStats}>
+                        HP: {pkmn.maxHealth} | Energia: {pkmn.energy} | Ataque: {totalAttack}
+                    </Text>
+                )}
                 {showBio && pkmn.shortBio && (
-                    <Text style={styles.pkmnBio} numberOfLines={2}>
+                    <Text style={styles.pkmnBio} numberOfLines={expanded ? undefined : 2}>
                         {pkmn.shortBio}
                     </Text>
                 )}
@@ -153,5 +162,6 @@ const styles = StyleSheet.create({
     infoContainer: { flex: 1 },
     pkmnName: { color: '#fff', fontSize: 20, fontWeight: 'bold' },
     pkmnType: { color: '#9ca3af', fontSize: 12, fontWeight: '600', marginBottom: 2 },
+    pkmnStats: { color: '#fbbf24', fontSize: 11, fontWeight: 'bold', marginBottom: 4 },
     pkmnBio: { color: '#d1d5db', fontSize: 11, fontStyle: 'italic' },
 });
