@@ -53,7 +53,9 @@ export default function BattleScreen({ playerId = 'pikachu', onExit }: BattleScr
                             <Text style={styles.timerText}>{timeLeft}</Text>
                         </View>
                         <View style={styles.turnIndicator}>
-                            <Text style={styles.turnText}>{currentTurn === 'player' ? 'YOUR TURN' : 'ENEMY TURN'}</Text>
+                            <Text style={styles.turnText}>
+                                {currentTurn === 'player' ? 'SEU TURNO' : 'TURNO INIMIGO'}
+                            </Text>
                         </View>
                     </View>
 
