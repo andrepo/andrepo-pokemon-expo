@@ -1,8 +1,8 @@
-# 📖 Project Documentation: Pokémon Battle App
+# Project Documentation: Pokémon Battle App
 
 This document describes the architecture, directory structure, and business logic behind the Pokémon Battle app built with React Native and Expo.
 
-## Architecture and Directory Structure
+## 📂 Architecture and Directory Structure
 
 The project uses **Expo Router** for navigation and adopts an architecture based on separation of concerns (UI vs. Logic), utilizing _Custom Hooks_ and the _Context API_.
 
@@ -19,6 +19,14 @@ The project uses **Expo Router** for navigation and adopts an architecture based
     - `pokemonDb.ts`: The static database containing attributes, attacks, images (sprites), and the reward pool function (`getLootPool`).
 - **`/context`**:
     - `GameContext.tsx`: Manages the player's global state (e.g., unlocked Pokémon/inventory).
+- **`/scripts`**: Automation tools.
+    - `localize-assets.js`: A Node.js script that parses the database, downloads all remote images to `assets/images/game`, and automatically updates `pokemonDb.ts` to use local `require()` imports.
+
+### Commands
+
+```bash
+node scripts/localize-assets.js
+```
 
 ---
 

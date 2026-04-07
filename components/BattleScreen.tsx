@@ -1,8 +1,8 @@
 import { Image } from 'expo-image';
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { POKEMON_DB } from '../constants/pokemonDb';
+import { BATTLE_BACKGROUNDS, BOSS_POOL, POKEMON_DB } from '../constants/pokemonDb';
 import { useBattleLogic } from '../hooks/useBattleLogic';
 import { useBattleLoot } from '../hooks/useBattleLoot';
 import BattleSide from './BattleSide';
@@ -14,7 +14,11 @@ interface BattleScreenProps {
 
 export default function BattleScreen({ playerId = 'pikachu', onExit }: BattleScreenProps) {
     const playerPokemon = POKEMON_DB[playerId] || POKEMON_DB['pikachu'];
-    const cpuPokemon = POKEMON_DB['mewtwo'];
+    const [cpuPokemonId] = useState(() => BOSS_POOL[Math.floor(Math.random() * BOSS_POOL.length)]);
+    const cpuPokemon = POKEMON_DB[cpuPokemonId];
+    const [backgroundSource] = useState(
+        () => BATTLE_BACKGROUNDS[Math.floor(Math.random() * BATTLE_BACKGROUNDS.length)],
+    );
 
     const {
         playerHealth,
@@ -38,13 +42,7 @@ export default function BattleScreen({ playerId = 'pikachu', onExit }: BattleScr
     return (
         <View style={styles.background}>
             {/* Background Image */}
-            <Image
-                source={{
-                    uri: 'https://wallpapercave.com/wp/wp10311649.png',
-                }}
-                style={StyleSheet.absoluteFillObject}
-                contentFit='cover'
-            />
+            <Image source={backgroundSource} style={StyleSheet.absoluteFillObject} contentFit='cover' />
             <SafeAreaView style={styles.safeArea}>
                 <View style={styles.container}>
                     {/* Timer */}
@@ -65,7 +63,7 @@ export default function BattleScreen({ playerId = 'pikachu', onExit }: BattleScr
                         health={(playerHealth / playerPokemon.maxHealth) * 100}
                         energy={(playerEnergy / playerPokemon.energy) * 100}
                         pokemonSpriteUri={playerPokemon.spriteUri}
-                        trainerSpriteUri='https://play.pokemonshowdown.com/sprites/trainers/ash.png'
+                        trainerSpriteUri={require('../assets/images/game/trainer_ash.png')}
                         trainerPosition='left'
                         actions={playerActions}
                         damageTaken={playerDamageTaken}
@@ -77,7 +75,7 @@ export default function BattleScreen({ playerId = 'pikachu', onExit }: BattleScr
                         health={(cpuHealth / cpuPokemon.maxHealth) * 100}
                         energy={(cpuEnergy / cpuPokemon.energy) * 100}
                         pokemonSpriteUri={cpuPokemon.spriteUri}
-                        trainerSpriteUri='https://play.pokemonshowdown.com/sprites/trainers/ash.png'
+                        trainerSpriteUri={require('../assets/images/game/trainer_ash.png')}
                         trainerPosition='right'
                         actions={cpuActions}
                         damageTaken={cpuDamageTaken}
@@ -94,7 +92,7 @@ export default function BattleScreen({ playerId = 'pikachu', onExit }: BattleScr
                         <View style={styles.lootContainer}>
                             <Text style={styles.lootText}>NOVO POKÉMON: {POKEMON_DB[loot].name}!</Text>
                             <Image
-                                source={{ uri: POKEMON_DB[loot].inventoryImageUri }}
+                                source={POKEMON_DB[loot].inventoryImageUri}
                                 style={{ width: 100, height: 100 }}
                                 contentFit='contain'
                             />

@@ -12,8 +12,8 @@ interface BattleSideProps {
     name: string;
     health: number; // Percentage 0-100
     energy: number; // Percentage 0-100
-    pokemonSpriteUri: string;
-    trainerSpriteUri: string;
+    pokemonSpriteUri: any;
+    trainerSpriteUri: any;
     trainerPosition: 'left' | 'right';
     actions: ActionProps[];
     damageTaken?: number | null;
@@ -40,9 +40,9 @@ export default function BattleSide({
             </View>
 
             <View style={styles.spritesContainer}>
-                <Image source={{ uri: pokemonSpriteUri }} style={styles.pokemonSprite} contentFit='contain' />
+                <Image source={pokemonSpriteUri} style={styles.pokemonSprite} contentFit='contain' />
                 <Image
-                    source={{ uri: trainerSpriteUri }}
+                    source={trainerSpriteUri}
                     style={trainerPosition === 'left' ? styles.trainerSpriteLeft : styles.trainerSpriteRight}
                     contentFit='contain'
                 />

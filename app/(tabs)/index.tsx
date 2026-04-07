@@ -39,7 +39,7 @@ function PokemonRow({ item, onPress, showBio = false }: { item: string; onPress?
 
     return (
         <Container style={styles.row} onPress={handlePress} activeOpacity={handlePress ? 0.7 : 1}>
-            <Image source={{ uri: pkmn.inventoryImageUri }} style={styles.sprite} contentFit='contain' />
+            <Image source={pkmn.inventoryImageUri} style={styles.sprite} contentFit='contain' />
             <View style={styles.infoContainer}>
                 <Text style={styles.pkmnName}>{pkmn.name}</Text>
                 {pkmn.type && <Text style={styles.pkmnType}>{pkmn.type}</Text>}
