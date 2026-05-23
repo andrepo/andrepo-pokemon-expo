@@ -188,10 +188,72 @@ export const POKEMON_DB: Record<string, PokemonData> = {
             { label: 'Garra do Dragão', damage: 25, hitChance: 0.85, energyCost: 20 },
         ],
     },
+    chikorita: {
+        id: 'chikorita',
+        name: 'Chikorita',
+        maxHealth: 120,
+        energy: 100,
+        spriteUri: require('../assets/images/game/152.png'),
+        inventoryImageUri: require('../assets/images/game/152.png'),
+        type: 'Planta',
+        actions: [
+            // Fast attack (Generates Energy)
+            { label: 'Tackle', damage: 15, hitChance: 1.0, energyCost: -15 },
+            // Charged attacks (Consumes Energy)
+            { label: 'Razor Leaf', damage: 30, hitChance: 0.95, energyCost: 20 },
+            { label: 'Solar Beam', damage: 55, hitChance: 0.8, energyCost: 40 },
+            // Healing ability (3-Turn Cooldown)
+            { label: 'Synthesis', damage: -25, hitChance: 1.0, energyCost: 15 },
+        ],
+    },
+    eiscue: {
+        id: 'eiscue',
+        name: 'Eiscue',
+        maxHealth: 140,
+        energy: 100,
+        spriteUri: require('../assets/images/game/875.png'),
+        inventoryImageUri: require('../assets/images/game/875.png'),
+        type: 'Água / Gelo',
+        actions: [
+            //{ label: 'Powder Snow', damage: 15, hitChance: 1.0, energyCost: -15 },
+            { label: 'Cabeçada Congelante', damage: 25, hitChance: 0.9, energyCost: 15 },
+            { label: 'Investida', damage: 50, hitChance: 0.7, energyCost: 40 },
+            //{ label: 'Hail', damage: -30, hitChance: 1.0, energyCost: 20 },
+        ],
+    },
+    chiYu: {
+        id: 'chi-yu',
+        name: 'Chi-Yu',
+        maxHealth: 110,
+        energy: 100,
+        spriteUri: require('../assets/images/game/1004.png'),
+        inventoryImageUri: require('../assets/images/game/1004.png'),
+        type: 'Fogo / Sombrio',
+        actions: [
+            { label: 'Ember', damage: 15, hitChance: 1.0, energyCost: -15 },
+            { label: 'Dark Pulse', damage: 30, hitChance: 0.9, energyCost: 20 },
+            { label: 'Ruination', damage: 45, hitChance: 0.8, energyCost: 35 },
+            { label: 'Rest', damage: -30, hitChance: 1.0, energyCost: 20 },
+        ],
+    },
+    ekans: {
+        id: 'ekans',
+        name: 'Ekans',
+        maxHealth: 100,
+        energy: 100,
+        spriteUri: require('../assets/images/game/23.png'),
+        inventoryImageUri: require('../assets/images/game/23.png'),
+        actions: [
+            { label: 'Bite', damage: 15, hitChance: 0.95, energyCost: -15 },
+            { label: 'Poison Sting', damage: 25, hitChance: 0.9, energyCost: 20 },
+            { label: 'Sludge Bomb', damage: 45, hitChance: 0.8, energyCost: 35 },
+            { label: 'Shed Skin', damage: -25, hitChance: 1.0, energyCost: 20 },
+        ],
+    },
 };
 
 // The pool of strong Pokémon that the CPU can use
-export const BOSS_POOL = ['mewtwo', 'gengar', 'snorlax', 'dragonite'];
+export const BOSS_POOL = ['mewtwo', 'gengar', 'meowth', 'ekans'];
 
 // Random battle backgrounds
 export const BATTLE_BACKGROUNDS: any[] = [
@@ -202,6 +264,9 @@ export const BATTLE_BACKGROUNDS: any[] = [
 
 // Returns the pool of Pokémon you can unlock by winning, excluding those already owned!
 export const getLootPool = (ownedPokemonIds: string[]): string[] => {
-    const excludedIds = ['pikachu', ...BOSS_POOL];
     return Object.keys(POKEMON_DB).filter((id) => !excludedIds.includes(id) && !ownedPokemonIds.includes(id));
 };
+
+export const excludedIds = ['pikachu', ...BOSS_POOL];
+// Helper array containing all Pokémon IDs for testing purposes
+export const ALL_POKEMON_IDS = Object.keys(POKEMON_DB).filter((id) => !excludedIds.includes(id));
