@@ -30,6 +30,49 @@ node scripts/localize-assets.js
 
 ---
 
+## 🖼️ How to Add a New Pokémon & Localize Sprites
+
+When adding a new Pokémon, you must provide its front sprite, back sprite, and inventory image as remote HTTP/HTTPS URLs. The localization script will automatically download them and configure the local `require()` imports.
+
+### 1. Configure the URLs in `pokemonDb.ts`
+Under the Pokémon's database entry in [pokemonDb.ts](file:///Users/andrepaterlinioliveiravieira/andrepo-pokemon-expo/constants/pokemonDb.ts), define the following fields with temporary string URLs:
+*   `spriteUri`: The front-facing sprite (used on the CPU/Right side).
+*   `backSpriteUri` *(Optional)*: The back-facing sprite (used on the Player/Left side). If omitted, it will automatically fall back to the front sprite.
+*   `inventoryImageUri`: The high-resolution official artwork image used for menus and inventory.
+
+### 2. Sprite URL Sources
+
+#### A. PokéAPI (Generations 1 to 5)
+For Gen 1-5 Pokémon, use the official Gen 5 animated GIF sprites:
+*   **Front (Animated)**: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/<dex_number>.gif`
+*   **Back (Animated)**: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/<dex_number>.gif`
+*   **Inventory (Artwork)**: `https://db.pokemongohub.net/images/official/full/<three_digit_dex_number_with_leading_zeros>.webp`
+
+#### B. Pokémon Showdown (Generations 6 to 9)
+For newer generations, use the Pokémon Showdown sprite mirrors:
+*   **Front (Animated)**: `https://play.pokemonshowdown.com/sprites/gen5ani/<lowercase_pokemon_name>.gif`
+*   **Back (Static fallback)**: `https://play.pokemonshowdown.com/sprites/gen5-back/<lowercase_pokemon_name>.png` (or `ani-back/` if an animated GIF is available).
+*   **Inventory (Artwork)**: `https://db.pokemongohub.net/images/official/full/<dex_number>.webp`
+
+### 3. Localize the Assets
+Once the URLs are configured, run the localization script:
+```bash
+node scripts/localize-assets.js
+```
+The script will:
+1. Scan `pokemonDb.ts` for HTTP/HTTPS strings.
+2. Download them to `assets/images/game/`.
+3. Avoid collisions: If a URL contains `/back/` or `-back/`, it automatically renames the local file to have a `_back` suffix (e.g. `23_back.gif`).
+4. Replace the remote URL strings in `pokemonDb.ts` with local `require()` imports.
+
+### 4. Clear Metro Cache
+After running the script, Metro Bundler must be restarted with cache clearing so that it discovers the new require files:
+```bash
+npx expo start -c --ios
+```
+
+---
+
 ## ⚔️ Battle Logic (`useBattleLogic`)
 
 The battle takes place in alternating turns between the **Player** and the **CPU** (Artificial Intelligence). Combat is supported by three main pillars: **Health (HP)**, **Energy**, and **Time**.

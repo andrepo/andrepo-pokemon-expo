@@ -26,7 +26,11 @@ async function run() {
 
     while ((match = urlRegex.exec(dbContent)) !== null) {
         const url = match[1];
-        const filename = url.split('/').pop();
+        let filename = url.split('/').pop();
+        if ((url.includes('/back/') || url.includes('-back/')) && !filename.includes('back')) {
+            const parts = filename.split('.');
+            filename = parts.length > 1 ? `${parts.slice(0, -1).join('.')}_back.${parts[parts.length - 1]}` : `${filename}_back`;
+        }
         const destPath = path.join(ASSETS_DIR, filename);
 
         console.log(`⬇️  Downloading ${filename}...`);
@@ -46,6 +50,8 @@ async function run() {
     // Update the Types to natively accept the require() modules
     dbContent = dbContent.replaceAll('spriteUri: string;', 'spriteUri: any;');
     dbContent = dbContent.replaceAll('inventoryImageUri: string;', 'inventoryImageUri: any;');
+    dbContent = dbContent.replaceAll('backSpriteUri?: string;', 'backSpriteUri?: any;');
+    dbContent = dbContent.replaceAll('backSpriteUri: string;', 'backSpriteUri: any;');
 
     fs.writeFileSync(dbPath, dbContent);
 

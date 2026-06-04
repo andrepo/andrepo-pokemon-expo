@@ -4,6 +4,7 @@ export type PokemonData = {
     maxHealth: number;
     energy: number;
     spriteUri: any;
+    backSpriteUri?: any;
     inventoryImageUri: any;
     type?: string;
     shortBio?: string;
@@ -17,6 +18,7 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         maxHealth: 100,
         energy: 100,
         spriteUri: require('../assets/images/game/25.gif'),
+        backSpriteUri: require('../assets/images/game/25_back.gif'),
         inventoryImageUri: require('../assets/images/game/025.webp'),
         type: 'Elétrico',
         shortBio:
@@ -32,6 +34,7 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         maxHealth: 120,
         energy: 80,
         spriteUri: require('../assets/images/game/150.gif'),
+        backSpriteUri: require('../assets/images/game/150_back.gif'),
         inventoryImageUri: require('../assets/images/game/150.webp'),
         type: 'Psíquico',
         shortBio:
@@ -48,6 +51,7 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         maxHealth: 90,
         energy: 100,
         spriteUri: require('../assets/images/game/4.gif'),
+        backSpriteUri: require('../assets/images/game/4_back.gif'),
         inventoryImageUri: require('../assets/images/game/004.webp'),
         type: 'Fogo',
         shortBio: 'A chama que queima na ponta de sua cauda é uma indicação de suas emoções.',
@@ -62,6 +66,7 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         maxHealth: 110,
         energy: 100,
         spriteUri: require('../assets/images/game/1.gif'),
+        backSpriteUri: require('../assets/images/game/1_back.gif'),
         inventoryImageUri: require('../assets/images/game/001.webp'),
         type: 'Planta / Venenoso',
         shortBio: 'Há uma semente de planta em suas costas desde o dia em que este Pokémon nasce.',
@@ -76,6 +81,7 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         maxHealth: 100,
         energy: 100,
         spriteUri: require('../assets/images/game/133.gif'),
+        backSpriteUri: require('../assets/images/game/133_back.gif'),
         inventoryImageUri: require('../assets/images/game/133.webp'),
         type: 'Normal',
         shortBio:
@@ -91,6 +97,7 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         maxHealth: 110,
         energy: 100,
         spriteUri: require('../assets/images/game/54.gif'),
+        backSpriteUri: require('../assets/images/game/54_back.gif'),
         inventoryImageUri: require('../assets/images/game/054.webp'),
         type: 'Água',
         shortBio:
@@ -106,6 +113,7 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         maxHealth: 90,
         energy: 100,
         spriteUri: require('../assets/images/game/52.gif'),
+        backSpriteUri: require('../assets/images/game/52_back.gif'),
         inventoryImageUri: require('../assets/images/game/052.webp'),
         type: 'Normal',
         shortBio: 'Adora objetos circulares. Vaga pelas ruas todas as noites à procura de moedas perdidas.',
@@ -120,6 +128,7 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         maxHealth: 85,
         energy: 100,
         spriteUri: require('../assets/images/game/47.gif'),
+        backSpriteUri: require('../assets/images/game/47_back.gif'),
         inventoryImageUri: require('../assets/images/game/047.webp'),
         type: 'Inseto / Planta',
         shortBio:
@@ -135,6 +144,7 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         maxHealth: 130,
         energy: 100,
         spriteUri: require('../assets/images/game/39.gif'),
+        backSpriteUri: require('../assets/images/game/39_back.gif'),
         inventoryImageUri: require('../assets/images/game/039.webp'),
         type: 'Normal / Fada',
         shortBio:
@@ -150,6 +160,7 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         maxHealth: 110,
         energy: 100,
         spriteUri: require('../assets/images/game/94.gif'),
+        backSpriteUri: require('../assets/images/game/94_back.gif'),
         inventoryImageUri: require('../assets/images/game/094.webp'),
         type: 'Fantasma / Venenoso',
         shortBio: 'Para roubar a vida de seu alvo, ele se esconde na sombra da vítima e espera em silêncio.',
@@ -164,6 +175,7 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         maxHealth: 160,
         energy: 100,
         spriteUri: require('../assets/images/game/143.gif'),
+        backSpriteUri: require('../assets/images/game/143_back.gif'),
         inventoryImageUri: require('../assets/images/game/143.webp'),
         type: 'Normal',
         shortBio:
@@ -180,6 +192,7 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         maxHealth: 140,
         energy: 100,
         spriteUri: require('../assets/images/game/149.gif'),
+        backSpriteUri: require('../assets/images/game/149_back.gif'),
         inventoryImageUri: require('../assets/images/game/149.webp'),
         type: 'Dragão / Voador',
         shortBio: 'Um Pokémon bondoso que guia navios perdidos em tempestades para a segurança.',
@@ -193,8 +206,9 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         name: 'Chikorita',
         maxHealth: 120,
         energy: 100,
-        spriteUri: require('../assets/images/game/152.png'),
-        inventoryImageUri: require('../assets/images/game/152.png'),
+        spriteUri: require('../assets/images/game/152.gif'),
+        backSpriteUri: require('../assets/images/game/152_back.gif'),
+        inventoryImageUri: require('../assets/images/game/152.webp'),
         type: 'Planta',
         actions: [
             // Fast attack (Generates Energy)
@@ -211,8 +225,9 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         name: 'Eiscue',
         maxHealth: 140,
         energy: 100,
-        spriteUri: require('../assets/images/game/875.png'),
-        inventoryImageUri: require('../assets/images/game/875.png'),
+        spriteUri: require('../assets/images/game/eiscue.gif'),
+        backSpriteUri: require('../assets/images/game/eiscue_back.gif'),
+        inventoryImageUri: require('../assets/images/game/875.webp'),
         type: 'Água / Gelo',
         actions: [
             //{ label: 'Powder Snow', damage: 15, hitChance: 1.0, energyCost: -15 },
@@ -222,12 +237,14 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         ],
     },
     chiYu: {
+        // Restricted to boss-only because Gen 9 Chi-Yu does not have an animated back sprite (only a static back PNG).
         id: 'chi-yu',
         name: 'Chi-Yu',
         maxHealth: 110,
         energy: 100,
-        spriteUri: require('../assets/images/game/1004.png'),
-        inventoryImageUri: require('../assets/images/game/1004.png'),
+        spriteUri: require('../assets/images/game/chiyu.gif'),
+        backSpriteUri: require('../assets/images/game/chiyu_back.png'),
+        inventoryImageUri: require('../assets/images/game/1004.webp'),
         type: 'Fogo / Sombrio',
         actions: [
             { label: 'Ember', damage: 15, hitChance: 1.0, energyCost: -15 },
@@ -241,8 +258,9 @@ export const POKEMON_DB: Record<string, PokemonData> = {
         name: 'Ekans',
         maxHealth: 100,
         energy: 100,
-        spriteUri: require('../assets/images/game/23.png'),
-        inventoryImageUri: require('../assets/images/game/23.png'),
+        spriteUri: require('../assets/images/game/23.gif'),
+        backSpriteUri: require('../assets/images/game/23_back.gif'),
+        inventoryImageUri: require('../assets/images/game/023.webp'),
         actions: [
             { label: 'Bite', damage: 15, hitChance: 0.95, energyCost: -15 },
             { label: 'Poison Sting', damage: 25, hitChance: 0.9, energyCost: 20 },
@@ -253,7 +271,7 @@ export const POKEMON_DB: Record<string, PokemonData> = {
 };
 
 // The pool of strong Pokémon that the CPU can use
-export const BOSS_POOL = ['mewtwo', 'gengar', 'meowth', 'ekans'];
+export const BOSS_POOL = ['mewtwo', 'gengar', 'meowth', 'ekans', 'chiYu'];
 
 // Random battle backgrounds
 export const BATTLE_BACKGROUNDS: any[] = [

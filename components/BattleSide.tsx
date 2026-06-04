@@ -41,11 +41,11 @@ export default function BattleSide({
 
             <View style={styles.spritesContainer}>
                 <Image source={pokemonSpriteUri} style={styles.pokemonSprite} contentFit='contain' />
-                <Image
+                {/* <Image
                     source={trainerSpriteUri}
                     style={trainerPosition === 'left' ? styles.trainerSpriteLeft : styles.trainerSpriteRight}
                     contentFit='contain'
-                />
+                /> */}
                 {damageTaken !== null && damageTaken !== undefined && (
                     <Text style={[styles.floatingDamage, damageTaken < 0 && styles.floatingHeal]}>
                         {damageTaken < 0 ? `+${Math.abs(damageTaken)}` : `-${damageTaken}`}
