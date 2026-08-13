@@ -13,8 +13,6 @@ const GameContext = createContext<GameContextType>({
 });
 
 export const GameProvider = ({ children }: { children: React.ReactNode }) => {
-    //const [ownedPokemonIds, setOwnedPokemonIds] = useState<string[]>(['pikachu']);
-    // Change this temporarily from ['pikachu'] to ALL_POKEMON_IDS
     const [ownedPokemonIds, setOwnedPokemonIds] = useState<string[]>(ALL_POKEMON_IDS);
 
     const addPokemon = (id: string) => {
@@ -24,6 +22,6 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     return <GameContext.Provider value={{ ownedPokemonIds, addPokemon }}>{children}</GameContext.Provider>;
-};;
+};
 
 export const useGame = () => useContext(GameContext);
