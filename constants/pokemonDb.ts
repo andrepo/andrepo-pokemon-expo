@@ -1,11 +1,13 @@
+import { ImageSourcePropType } from 'react-native';
+
 export type PokemonData = {
     id: string;
     name: string;
     maxHealth: number;
     energy: number;
-    spriteUri: any;
-    backSpriteUri?: any;
-    inventoryImageUri: any;
+    spriteUri: ImageSourcePropType;
+    backSpriteUri?: ImageSourcePropType;
+    inventoryImageUri: ImageSourcePropType;
     type?: string;
     shortBio?: string;
     actions: { label: string; damage: number; hitChance: number; energyCost?: number }[];
@@ -274,7 +276,7 @@ export const POKEMON_DB: Record<string, PokemonData> = {
 export const BOSS_POOL = ['mewtwo', 'gengar', 'meowth', 'ekans', 'chiYu'];
 
 // Random battle backgrounds
-export const BATTLE_BACKGROUNDS: any[] = [
+export const BATTLE_BACKGROUNDS: ImageSourcePropType[] = [
     require('../assets/images/game/wp14791617.webp'),
     require('../assets/images/game/wp14791610.webp'),
     require('../assets/images/game/wp14791602.webp'),

@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ImageSourcePropType, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export interface ActionProps {
     label: string;
@@ -12,8 +12,8 @@ interface BattleSideProps {
     name: string;
     health: number; // Percentage 0-100
     energy: number; // Percentage 0-100
-    pokemonSpriteUri: any;
-    trainerSpriteUri: any;
+    pokemonSpriteUri: ImageSourcePropType;
+    trainerSpriteUri: ImageSourcePropType;
     trainerPosition: 'left' | 'right';
     actions: ActionProps[];
     damageTaken?: number | null;

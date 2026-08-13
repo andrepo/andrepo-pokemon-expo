@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { PokemonData } from '../constants/pokemonDb';
 
 export function useBattleLogic(playerPokemon: PokemonData, cpuPokemon: PokemonData) {
@@ -12,6 +12,17 @@ export function useBattleLogic(playerPokemon: PokemonData, cpuPokemon: PokemonDa
     const [cpuDamageTaken, setCpuDamageTaken] = useState<number | null>(null);
     const [playerHealCooldown, setPlayerHealCooldown] = useState(0);
     const [cpuHealCooldown, setCpuHealCooldown] = useState(0);
+
+    const playerDamageTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const cpuDamageTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    // Clean up damage indicator timeouts on unmount
+    useEffect(() => {
+        return () => {
+            if (playerDamageTimerRef.current) clearTimeout(playerDamageTimerRef.current);
+            if (cpuDamageTimerRef.current) clearTimeout(cpuDamageTimerRef.current);
+        };
+    }, []);
 
     // Turn timer loop
     useEffect(() => {
@@ -59,41 +70,46 @@ export function useBattleLogic(playerPokemon: PokemonData, cpuPokemon: PokemonDa
                     if (attacker === 'player') {
                         setPlayerHealth((prev) => Math.min(playerPokemon.maxHealth, prev + healAmount));
                         setPlayerDamageTaken(damage);
-                        setTimeout(() => setPlayerDamageTaken(null), 1000);
+                        if (playerDamageTimerRef.current) clearTimeout(playerDamageTimerRef.current);
+                        playerDamageTimerRef.current = setTimeout(() => setPlayerDamageTaken(null), 1000);
                     } else {
                         setCpuHealth((prev) => Math.min(cpuPokemon.maxHealth, prev + healAmount));
                         setCpuDamageTaken(damage);
-                        setTimeout(() => setCpuDamageTaken(null), 1000);
+                        if (cpuDamageTimerRef.current) clearTimeout(cpuDamageTimerRef.current);
+                        cpuDamageTimerRef.current = setTimeout(() => setCpuDamageTaken(null), 1000);
                     }
                 } else {
                     // Positive damage is a regular attack, apply to opponent
                     if (attacker === 'player') {
                         setCpuHealth((prev) => Math.max(0, prev - damage));
                         setCpuDamageTaken(damage);
-                        setTimeout(() => setCpuDamageTaken(null), 1000);
+                        if (cpuDamageTimerRef.current) clearTimeout(cpuDamageTimerRef.current);
+                        cpuDamageTimerRef.current = setTimeout(() => setCpuDamageTaken(null), 1000);
                     } else {
                         setPlayerHealth((prev) => Math.max(0, prev - damage));
                         setPlayerDamageTaken(damage);
-                        setTimeout(() => setPlayerDamageTaken(null), 1000);
+                        if (playerDamageTimerRef.current) clearTimeout(playerDamageTimerRef.current);
+                        playerDamageTimerRef.current = setTimeout(() => setPlayerDamageTaken(null), 1000);
                     }
                 }
-            } else {
-                console.log(`${attacker} missed the attack!`);
             }
 
             // Switch turns and reset timer after an attack
             setCurrentTurn(attacker === 'player' ? 'cpu' : 'player');
             setTimeLeft(15);
         },
-        [playerPokemon.maxHealth, cpuPokemon.maxHealth],
+        [playerPokemon.energy, playerPokemon.maxHealth, cpuPokemon.energy, cpuPokemon.maxHealth],
     );
 
     // Helper exposed for the UI buttons
-    const handlePlayerAttack = (damage: number, hitChance: number, energyCost: number) => {
-        if (currentTurn !== 'player') return;
-        if (playerEnergy < energyCost) return;
-        performAttack('player', damage, hitChance, energyCost);
-    };
+    const handlePlayerAttack = useCallback(
+        (damage: number, hitChance: number, energyCost: number) => {
+            if (currentTurn !== 'player') return;
+            if (playerEnergy < energyCost) return;
+            performAttack('player', damage, hitChance, energyCost);
+        },
+        [currentTurn, playerEnergy, performAttack],
+    );
 
     // Basic CPU Artificial Intelligence
     useEffect(() => {
@@ -103,13 +119,12 @@ export function useBattleLogic(playerPokemon: PokemonData, cpuPokemon: PokemonDa
                 // Filter available actions so the CPU doesn't try to use a healing move on cooldown
                 // and ensure it has enough energy to use the selected move
                 const availableActions = cpuPokemon.actions.filter(
-                    (action) =>
-                        !(action.damage < 0 && cpuHealCooldown > 0) && cpuEnergy >= ((action as any).energyCost ?? 15),
+                    (action) => !(action.damage < 0 && cpuHealCooldown > 0) && cpuEnergy >= (action.energyCost ?? 15),
                 );
 
                 if (availableActions.length > 0) {
                     const move = availableActions[Math.floor(Math.random() * availableActions.length)];
-                    performAttack('cpu', move.damage, move.hitChance, (move as any).energyCost ?? 15);
+                    performAttack('cpu', move.damage, move.hitChance, move.energyCost ?? 15);
                 } else {
                     // Skip turn if the CPU has no energy left for any action
                     setCurrentTurn('player');
@@ -131,12 +146,12 @@ export function useBattleLogic(playerPokemon: PokemonData, cpuPokemon: PokemonDa
         setCpuDamageTaken(null);
         setPlayerHealCooldown(0);
         setCpuHealCooldown(0);
-    }, []);
+    }, [playerPokemon.maxHealth, playerPokemon.energy, cpuPokemon.maxHealth, cpuPokemon.energy]);
 
     // UI Formatters for Actions
     const playerActions = useMemo(() => {
         return playerPokemon.actions.map((action) => {
-            const energyCost = (action as any).energyCost ?? 15;
+            const energyCost = action.energyCost ?? 15;
             const isHealOnCooldown = action.damage < 0 && playerHealCooldown > 0;
             const notEnoughEnergy = playerEnergy < energyCost;
             const energyIndicator = energyCost < 0 ? `+${Math.abs(energyCost)}⚡` : `-${energyCost}⚡`;
@@ -151,7 +166,7 @@ export function useBattleLogic(playerPokemon: PokemonData, cpuPokemon: PokemonDa
 
     const cpuActions = useMemo(() => {
         return cpuPokemon.actions.map((action) => {
-            const energyCost = (action as any).energyCost ?? 15;
+            const energyCost = action.energyCost ?? 15;
             const isHealOnCooldown = action.damage < 0 && cpuHealCooldown > 0;
             const energyIndicator = energyCost < 0 ? `+${Math.abs(energyCost)}⚡` : `-${energyCost}⚡`;
             const baseLabel = `${action.label}\n(${energyIndicator})`;
